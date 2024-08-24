@@ -1,5 +1,5 @@
 import knex, { Knex } from "knex";
-import knexConfig from "../../knexfile";
+import knexConfig from "../config/knex";
 
 // todo: clean up methods
 class Database {
@@ -38,8 +38,16 @@ class Database {
     table: string,
     columns: string[],
     where: Record<string, unknown>
+  ): Promise<T> {
+    return this.query(this.db(table).select(columns).where(where).first()) as T;
+  }
+
+  public async selectAllWhere<T>(
+    table: string,
+    columns: string[],
+    where: Record<string, unknown>
   ): Promise<T[]> {
-    return this.query(this.db(table).select(columns).where(where).first());
+    return this.query(this.db(table).select(columns).where(where));
   }
 
   public async insert<T>(table: string, data: T): Promise<T[]> {

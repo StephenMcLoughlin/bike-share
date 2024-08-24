@@ -26,19 +26,24 @@ class AuthController {
   }
 
   public async login(req: Request, res: Response) {
-    // todo: implement this correctly
-    // const { email, password } = req.body;
-    // const user = await this.userService.getUserByEmail(email);
-    // if (!user) {
-    //   return res.status(404).json({ success: false });
-    // }
-    // const userPassword = user.password;
-    // const isMatch = compare(password, user.password);
-    // if (!isMatch) {
-    //   return res.status(400).json({ success: false, data: {} });
-    // }
-    // const { password, ...data } = user;
-    // return res.status(200).json({ success: true, data });
+    const { email, password: userPasswordInput } = req.body;
+    const user = await this.userService.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+        data: null,
+      });
+    }
+
+    const isMatch = compare(userPasswordInput, user?.password);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, data: null });
+    }
+
+    const { password, ...data } = user;
+    return res.status(200).json({ success: true, data });
   }
 
   public async logout(req: Request, res: Response) {}
