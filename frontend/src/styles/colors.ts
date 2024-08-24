@@ -1,0 +1,19 @@
+const BUTTON = {
+  ACTIVE_BACKGROUND: "#0000FF",
+  ACTIVE_TEXT: "#000",
+  DISABLED_BACKGROUND: "#030303",
+  DISABLED_TEXT: "004400",
+  DEFAULT_TEXT: "#000",
+  DEFAULT_BACKGROUND: "#FFF",
+};
+
+const TEXT = {
+  DEFAULT: "#000",
+};
+
+export const COLOR = {
+  BLACK: "#000",
+  WHITE: "#FFF",
+  BUTTON,
+  TEXT,
+};
