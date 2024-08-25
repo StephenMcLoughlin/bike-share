@@ -1,4 +1,4 @@
-class CustomDatabaseError extends Error {
+class CustomError extends Error {
   status: number;
   constructor(message: string, status: number) {
     super(message);
@@ -6,4 +6,4 @@ class CustomDatabaseError extends Error {
   }
 }
 
-export default CustomDatabaseError;
+export default CustomError;

@@ -1,5 +1,6 @@
 import knex, { Knex } from "knex";
 import knexConfig from "../config/knex";
+import { StringTransformations, convertObjectKeys } from "../utils/string";
 
 // todo: clean up methods
 class Database {
@@ -39,7 +40,15 @@ class Database {
     columns: string[],
     where: Record<string, unknown>
   ): Promise<T> {
-    return this.query(this.db(table).select(columns).where(where).first()) as T;
+    const result = await this.query<T>(
+      this.db(table).select(columns).where(where).first()
+    );
+
+    if (!result) {
+      return result;
+    }
+
+    return convertObjectKeys(result, StringTransformations.SNAKE_TO_CAMEL);
   }
 
   public async selectAllWhere<T>(
@@ -47,7 +56,7 @@ class Database {
     columns: string[],
     where: Record<string, unknown>
   ): Promise<T[]> {
-    return this.query(this.db(table).select(columns).where(where));
+    return this.query<T>(this.db(table).select(columns).where(where));
   }
 
   public async insert<T>(table: string, data: T): Promise<T[]> {

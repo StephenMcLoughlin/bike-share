@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import UserService from "../user/userService";
 import { compare } from "bcrypt";
 import { hash } from "../../utils/hash";
+import { createAccessTokens } from "../../utils/jwt";
 
 class AuthController {
   userService: UserService;
@@ -42,8 +43,20 @@ class AuthController {
       return res.status(400).json({ success: false, data: null });
     }
 
-    const { password, ...data } = user;
-    return res.status(200).json({ success: true, data });
+    const { password, ...userData } = user;
+    const tokens = createAccessTokens(userData);
+    if (!tokens) {
+      return res.status(500).json({ success: false });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        ...userData,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      },
+    });
   }
 
   public async logout(req: Request, res: Response) {}

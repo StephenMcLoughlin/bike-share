@@ -1,7 +1,8 @@
 import { DatabaseError } from "pg";
 import { Database } from "../../db/db";
-import CustomDatabaseError from "../../errors/customDatabaseError";
 import { POSTGRESS_CONSTANTS } from "../../constants/postgress";
+import CustomError from "../../errors/customError";
+import { StringTransformations, convertObjectKeys } from "../../utils/string";
 
 export interface User {
   firstName: string;
@@ -36,16 +37,20 @@ class UserService {
       ]);
     } catch (error) {
       console.error(error);
-      throw new CustomDatabaseError("Something went wrong", 500);
+      throw new CustomError("Something went wrong", 500);
     }
   }
 
-  async getUserById(userId: string) {
+  async getUserById(id: number) {
     try {
-      return await this.db.select<TUser>(TABLE_NAME, []);
+      return await this.db.selectWhere<TUser>(
+        TABLE_NAME,
+        ["id", "first_name", "last_name", "email"],
+        { id }
+      );
     } catch (error) {
       console.error(error);
-      throw new CustomDatabaseError("Something went wrong", 500);
+      throw new CustomError("Something went wrong", 500);
     }
   }
 
@@ -58,7 +63,7 @@ class UserService {
       );
     } catch (error) {
       console.error(error);
-      throw new CustomDatabaseError("Something went wrong", 500);
+      throw new CustomError("Something went wrong", 500);
     }
   }
 
@@ -77,9 +82,9 @@ class UserService {
         error instanceof DatabaseError &&
         error.code === POSTGRESS_CONSTANTS.DUPLICATE_ENTRY
       ) {
-        throw new CustomDatabaseError("Email already exists", 400);
+        throw new CustomError("Email already exists", 400);
       }
-      throw new CustomDatabaseError("Something went wrong", 500);
+      throw new CustomError("Something went wrong", 500);
     }
   }
 }
