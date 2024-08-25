@@ -18,9 +18,17 @@ class AuthController {
         ...userData,
         password: await hash(password),
       };
-      const response = await this.userService.createUser(user);
 
-      return res.status(200).json({ success: true, data: { user: response } });
+      const createdUser = await this.userService.createUser(user);
+      if (!createdUser) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Something went wrong" });
+      }
+
+      return res
+        .status(200)
+        .json({ success: true, data: { user: createdUser } });
     } catch (error) {
       next(error);
     }

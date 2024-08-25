@@ -1,6 +1,7 @@
 import knex, { Knex } from "knex";
 import knexConfig from "../config/knex";
 import { StringTransformations, convertObjectKeys } from "../utils/string";
+import logger from "../modules/logger/logger";
 
 // todo: clean up methods
 class Database {
@@ -22,7 +23,7 @@ class Database {
     try {
       return await queryBuilder;
     } catch (error) {
-      console.error("Database query error:", error);
+      logger.error("[query] - ", error);
       throw error;
     }
   }

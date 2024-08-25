@@ -2,7 +2,7 @@ import { DatabaseError } from "pg";
 import { Database } from "../../db/db";
 import { POSTGRESS_CONSTANTS } from "../../constants/postgress";
 import CustomError from "../../errors/customError";
-import { StringTransformations, convertObjectKeys } from "../../utils/string";
+import logger from "../logger/logger";
 
 export interface User {
   firstName: string;
@@ -36,7 +36,7 @@ class UserService {
         "email",
       ]);
     } catch (error) {
-      console.error(error);
+      logger.error("[getUsers] - ", error);
       throw new CustomError("Something went wrong", 500);
     }
   }
@@ -49,7 +49,7 @@ class UserService {
         { id }
       );
     } catch (error) {
-      console.error(error);
+      logger.error("[getUserById]", error);
       throw new CustomError("Something went wrong", 500);
     }
   }
@@ -62,7 +62,7 @@ class UserService {
         { email }
       );
     } catch (error) {
-      console.error(error);
+      logger.error("[getUserByEmail] - ", error);
       throw new CustomError("Something went wrong", 500);
     }
   }
@@ -78,6 +78,7 @@ class UserService {
         password,
       });
     } catch (error) {
+      logger.error("[createUser] - ", error);
       if (
         error instanceof DatabaseError &&
         error.code === POSTGRESS_CONSTANTS.DUPLICATE_ENTRY

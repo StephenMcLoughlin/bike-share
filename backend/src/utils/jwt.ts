@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import logger from "../modules/logger/logger";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -10,7 +11,7 @@ type AccessToken = {
 // todo: sort out typing
 export const createAccessTokens = (user: any): AccessToken | undefined => {
   if (!JWT_SECRET) {
-    console.error("Missing JWT Secret");
+    logger.error("Missing JWT Secret");
     return;
   }
 

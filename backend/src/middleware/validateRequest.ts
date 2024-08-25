@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema, ZodError } from "zod";
+import logger from "../modules/logger/logger";
 
 type Source = "body" | "query" | "params";
 
@@ -10,7 +11,7 @@ export const validateRequest = (schema: ZodSchema, source: Source = "body") => {
 
       next();
     } catch (err) {
-      console.error(err);
+      logger.error("[validateRequest] - ", err);
       if (err instanceof ZodError) {
         // Send a 400 response with validation error details
         return res.status(400).json({
