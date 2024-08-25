@@ -60,7 +60,7 @@ class AuthController {
     return res.status(200).json({
       success: true,
       data: {
-        ...userData,
+        user: { ...userData },
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
       },

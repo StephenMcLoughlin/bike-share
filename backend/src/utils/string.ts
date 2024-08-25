@@ -36,9 +36,9 @@ export const convertObjectKeys = <T extends Record<string, any>, U>(
   }, {} as U);
 };
 
-export const convertArrayKeys = (
-  arr: Array<Record<string, unknown>>,
+export const convertArrayKeys = <T extends Record<string, any>, U>(
+  arr: T[],
   conversionType: StringTransformations
-): Array<Record<string, unknown>> => {
-  return arr.map((obj) => convertObjectKeys(obj, conversionType));
+): U[] => {
+  return arr.map((obj) => convertObjectKeys<T, U>(obj, conversionType));
 };

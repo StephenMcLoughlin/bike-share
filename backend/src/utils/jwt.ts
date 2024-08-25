@@ -25,3 +25,22 @@ export const createAccessTokens = (user: any): AccessToken | undefined => {
 
   return { accessToken, refreshToken };
 };
+
+const verifyToken = (token: string, secret: string) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secret, (error, decoded) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(decoded);
+    });
+  });
+};
+
+export const verifyAccessToken = async (token: string) => {
+  if (!JWT_SECRET) {
+    logger.error("Missing JWT Secret");
+    return;
+  }
+  return await verifyToken(token, JWT_SECRET);
+};

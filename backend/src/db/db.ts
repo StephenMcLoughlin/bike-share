@@ -1,6 +1,10 @@
 import knex, { Knex } from "knex";
 import knexConfig from "../config/knex";
-import { StringTransformations, convertObjectKeys } from "../utils/string";
+import {
+  StringTransformations,
+  convertArrayKeys,
+  convertObjectKeys,
+} from "../utils/string";
 import logger from "../modules/logger/logger";
 
 // todo: clean up methods
@@ -19,7 +23,7 @@ class Database {
     return Database.instance;
   }
 
-  private async query<T>(queryBuilder: Knex.QueryBuilder): Promise<T[]> {
+  private async query<T>(queryBuilder: Knex.QueryBuilder): Promise<T> {
     try {
       return await queryBuilder;
     } catch (error) {
@@ -45,19 +49,23 @@ class Database {
       this.db(table).select(columns).where(where).first()
     );
 
-    if (!result) {
-      return result;
-    }
-
-    return convertObjectKeys(result, StringTransformations.SNAKE_TO_CAMEL);
+    return result
+      ? convertObjectKeys(result, StringTransformations.SNAKE_TO_CAMEL)
+      : result;
   }
 
-  public async selectAllWhere<T>(
+  public async selectAllWhere<T extends Record<string, unknown>>(
     table: string,
     columns: string[],
     where: Record<string, unknown>
   ): Promise<T[]> {
-    return this.query<T>(this.db(table).select(columns).where(where));
+    const result = await this.query<T[]>(
+      this.db(table).select(columns).where(where)
+    );
+
+    return result.length
+      ? convertArrayKeys(result, StringTransformations.SNAKE_TO_CAMEL)
+      : result;
   }
 
   public async insert<T>(table: string, data: T): Promise<T[]> {
