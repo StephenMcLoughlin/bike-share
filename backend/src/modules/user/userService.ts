@@ -4,7 +4,7 @@ import { POSTGRESS_CONSTANTS } from "../../constants/postgress";
 import CustomError from "../../errors/customError";
 import logger from "../logger/logger";
 
-export interface User {
+export interface IUser {
   firstName: string;
   lastName: string;
   email: string;
@@ -67,7 +67,7 @@ class UserService {
     }
   }
 
-  async createUser(user: User) {
+  async createUser(user: IUser) {
     const { firstName, lastName, email, password } = user;
 
     try {

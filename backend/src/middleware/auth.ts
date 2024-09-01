@@ -1,18 +1,32 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "../modules/logger/logger";
-import CustomError from "../errors/customError";
 import { verifyAccessToken } from "../utils/jwt";
+import { IUser } from "../modules/user/userService";
 
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header("Authorization")?.replace("Bearer", "");
+interface AuthenticatedRequest extends Request {
+  user?: IUser;
+}
 
-  if (!token) {
-    const error = new CustomError("Unauthorized", 401);
-    logger.error("[auth] - ", error);
-    throw error;
+export const auth = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    logger.error(
+      "[auth] - Unauthorized: Missing or malformed Authorization header"
+    );
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  await verifyAccessToken(token);
+  const [, token] = authHeader.split(" ");
+  try {
+    await verifyAccessToken(token);
+  } catch (error) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
 
   next();
 };
