@@ -17,6 +17,6 @@ services:
     container_name: bike_share_redis
     restart: always
     environment:
-      REDIS_PASSWORD: "EiYAZzjMCSEMjd0sC81I9IUzpRcv53FE"
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
