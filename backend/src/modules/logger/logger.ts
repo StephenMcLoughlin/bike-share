@@ -12,7 +12,7 @@ class Logger {
         format.errors({ stack: true }),
         format.splat(),
         format.printf(({ timestamp, level, message, stack }) => {
-          return `${timestamp} [${level.toUpperCase()}]: ${stack || message}`;
+          return `${timestamp} [${level.toUpperCase()}] ${stack || message}`;
         })
       ),
       transports: [
