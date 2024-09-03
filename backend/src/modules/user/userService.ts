@@ -5,6 +5,7 @@ import CustomError from "../../errors/customError";
 import logger from "../logger/logger";
 
 export interface IUser {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -41,9 +42,9 @@ class UserService {
     }
   }
 
-  async getUserById(id: number) {
+  async getUserById(id: number): Promise<IUser> {
     try {
-      return await this.db.selectWhere<TUser>(
+      return await this.db.selectWhere<IUser>(
         TABLE_NAME,
         ["id", "first_name", "last_name", "email"],
         { id }
@@ -54,9 +55,9 @@ class UserService {
     }
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<IUser> {
     try {
-      return await this.db.selectWhere<TUser>(
+      return await this.db.selectWhere<IUser>(
         TABLE_NAME,
         ["id", "first_name", "last_name", "email", "password"],
         { email }
@@ -68,15 +69,17 @@ class UserService {
   }
 
   async createUser(user: IUser) {
-    const { firstName, lastName, email, password } = user;
-
     try {
-      return await this.db.insert<TUser>(TABLE_NAME, {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        password,
-      });
+      const { password, ...createdUser } = await this.db.insert<TUser, IUser>(
+        TABLE_NAME,
+        {
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+          password: user.password,
+        }
+      );
+      return createdUser;
     } catch (error) {
       logger.error("[createUser] - ", error);
       if (

@@ -1,7 +1,6 @@
-import { RedisClientType, createClient } from "redis";
+import { RedisClientType, SetOptions, createClient } from "redis";
 import logger from "../modules/logger/logger";
 import CustomError from "../errors/customError";
-import { GENERIC_ERROR } from "../constants/postgress";
 
 class RedisClient {
   private static instance: RedisClient;
@@ -43,11 +42,18 @@ class RedisClient {
     return this.client.get(key);
   }
 
-  public async set(key: string, value: string) {
+  public async set(key: string, value: string, options?: SetOptions) {
     if (!this.isConnected) {
       this.logAndThrowError();
     }
-    await this.client.set(key, value);
+    await this.client.set(key, value, options);
+  }
+
+  public async delete(key: string) {
+    if (!this.isConnected) {
+      this.logAndThrowError();
+    }
+    await this.client.del(key);
   }
 
   private logAndThrowError() {

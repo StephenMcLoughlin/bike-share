@@ -1,0 +1,3 @@
+const MONTH_IN_MILLISECONDS = 60 * 60 * 24 * 30;
+
+export { MONTH_IN_MILLISECONDS };

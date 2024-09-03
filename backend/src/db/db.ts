@@ -1,5 +1,5 @@
 import knex, { Knex } from "knex";
-import knexConfig from "../config/knex";
+import knexConfig from "../../knexfile";
 import {
   StringTransformations,
   convertArrayKeys,
@@ -68,8 +68,17 @@ class Database {
       : result;
   }
 
-  public async insert<T>(table: string, data: T): Promise<T[]> {
-    return this.query(this.db(table).insert(data).returning("*"));
+  public async insert<
+    T extends Record<string, any>,
+    U extends Record<string, any>
+  >(table: string, data: T): Promise<U> {
+    const [result] = await this.query<T[]>(
+      this.db(table).insert(data).returning("*")
+    );
+
+    return result
+      ? convertObjectKeys<T, U>(result, StringTransformations.SNAKE_TO_CAMEL)
+      : result;
   }
 
   public static async close(): Promise<void> {

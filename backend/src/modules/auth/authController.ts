@@ -3,9 +3,11 @@ import UserService from "../user/userService";
 import { compare } from "bcrypt";
 import { hash } from "../../utils/hash";
 import { createAccessTokens } from "../../utils/jwt";
+import redisClient from "../../cache/redisClient";
+import { MONTH_IN_MILLISECONDS } from "../../constants/const";
 
 class AuthController {
-  userService: UserService;
+  private userService: UserService;
 
   constructor(userService: UserService) {
     this.userService = userService;
@@ -57,6 +59,10 @@ class AuthController {
       return res.status(500).json({ success: false });
     }
 
+    redisClient.set(tokens.refreshToken, String(user.id), {
+      EX: MONTH_IN_MILLISECONDS,
+    });
+
     return res.status(200).json({
       success: true,
       data: {
@@ -65,6 +71,10 @@ class AuthController {
         refreshToken: tokens.refreshToken,
       },
     });
+  }
+
+  public async refresh(req: Request, res: Response) {
+    const { refreshToken } = req.body;
   }
 
   public async logout(req: Request, res: Response) {}
