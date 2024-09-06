@@ -5,7 +5,13 @@ export async function up(knex: Knex): Promise<void> {
     table.bigIncrements("id").unsigned().primary();
     table.bigInteger("station_id").unsigned().notNullable();
     table.bigInteger("bike_id").unsigned().notNullable();
-    table.enu("status", ["Operational", "Faulty", "InService"]).notNullable();
+    table
+      .enum("status", ["Operational", "Faulty", "InService"], {
+        useNative: true,
+        enumName: "dock_status_enum",
+      })
+      .defaultTo("Operational")
+      .notNullable();
     table.foreign("station_id").references("id").inTable("station");
     table.foreign("bike_id").references("id").inTable("station");
   });
