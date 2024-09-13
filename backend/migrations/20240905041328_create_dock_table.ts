@@ -12,6 +12,7 @@ export async function up(knex: Knex): Promise<void> {
       })
       .defaultTo("Operational")
       .notNullable();
+
     table.foreign("station_id").references("id").inTable("station");
     table.foreign("bike_id").references("id").inTable("station");
   });

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:start": "nodemon src/index.ts",
-    "knex:migrate:lts": "knex migrate:latest",
+    "knex": "knex",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

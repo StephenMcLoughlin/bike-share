@@ -7,13 +7,17 @@ export const convertSnakeCaseToCamelCase = (str: string) => {
   return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
 };
 
+export const convertCamelCaseToSnakeCase = (str: string) => {
+  return str.replace(/([A-Z])/g, "_$1").toLowerCase();
+};
+
 const getConversionType = (
   key: string,
   conversionType: StringTransformations
 ) => {
   switch (conversionType) {
     case StringTransformations.CAMEL_TO_SNAKE:
-      return;
+      return convertCamelCaseToSnakeCase(key);
     case StringTransformations.SNAKE_TO_CAMEL:
       return convertSnakeCaseToCamelCase(key);
     default:

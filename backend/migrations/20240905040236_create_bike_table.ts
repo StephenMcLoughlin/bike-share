@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
       .defaultTo("Operational")
       .notNullable();
     table.boolean("is_ebike").notNullable();
-    table.dateTime("updated_at");
+    table.timestamp("updated_at");
   });
 }
 

@@ -12,4 +12,4 @@ export const userLoginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
-export const idSchemaNumber = z.string().regex(/^\d+$/).transform(Number);
+export const userIdSchema = z.string().regex(/^\d+$/).transform(Number);

@@ -72,13 +72,31 @@ class Database {
     T extends Record<string, any>,
     U extends Record<string, any>
   >(table: string, data: T): Promise<U> {
-    const [result] = await this.query<T[]>(
+    const result = await this.query<T>(
       this.db(table).insert(data).returning("*")
     );
 
     return result
       ? convertObjectKeys<T, U>(result, StringTransformations.SNAKE_TO_CAMEL)
       : result;
+  }
+
+  public async insertMany<
+    T extends Record<string, any>,
+    U extends Record<string, any>
+  >(table: string, data: T[]): Promise<T[]> {
+    const tableData = convertArrayKeys<T, U>(
+      data,
+      StringTransformations.CAMEL_TO_SNAKE
+    );
+
+    const result = await this.query<U[]>(
+      this.db(table).insert(tableData).returning("*")
+    );
+
+    return result.length
+      ? convertArrayKeys<U, T>(result, StringTransformations.SNAKE_TO_CAMEL)
+      : [];
   }
 
   public static async close(): Promise<void> {

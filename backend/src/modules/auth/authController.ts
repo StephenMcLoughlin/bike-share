@@ -4,7 +4,7 @@ import { compare } from "bcrypt";
 import { hash } from "../../utils/hash";
 import { createAccessTokens } from "../../utils/jwt";
 import redisClient from "../../cache/redisClient";
-import { MONTH_IN_MILLISECONDS } from "../../constants/const";
+import { ERROR_MESSSAGE, MONTH_IN_MILLISECONDS } from "../../constants/const";
 
 class AuthController {
   private userService: UserService;
@@ -23,9 +23,11 @@ class AuthController {
 
       const createdUser = await this.userService.createUser(user);
       if (!createdUser) {
-        return res
-          .status(500)
-          .json({ success: false, message: "Something went wrong" });
+        return res.status(500).json({
+          success: false,
+          message: ERROR_MESSSAGE.GENERIC,
+          data: null,
+        });
       }
 
       return res
@@ -56,7 +58,9 @@ class AuthController {
     const { password, ...userData } = user;
     const tokens = createAccessTokens(userData);
     if (!tokens) {
-      return res.status(500).json({ success: false });
+      return res
+        .status(500)
+        .json({ success: false, message: ERROR_MESSSAGE.GENERIC });
     }
 
     redisClient.set(tokens.refreshToken, String(user.id), {
